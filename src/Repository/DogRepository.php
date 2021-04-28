@@ -19,6 +19,7 @@ class DogRepository extends ServiceEntityRepository
         parent::__construct($registry, Dog::class);
     }
 
+
     // /**
     //  * @return Dog[] Returns an array of Dog objects
     //  */
