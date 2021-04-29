@@ -12,6 +12,7 @@ class DogType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+
             ->add('cat')
             ->add('price')
             ->add('monkey')
@@ -22,6 +23,7 @@ class DogType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Dog::class,
+
         ]);
     }
 }
