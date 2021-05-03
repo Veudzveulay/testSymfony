@@ -6,9 +6,12 @@ use App\Entity\Dog;
 use App\Form\DogType;
 use App\Repository\DogRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Json;
+
 
 /**
  * @Route("/dog")
@@ -34,12 +37,16 @@ class DogController extends AbstractController
         $form = $this->createForm(DogType::class, $dog);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($dog);
-            $entityManager->flush();
+        if ($request->isMethod('POST')) {
+            $form->submit($request->request->get($form ->getNa));
 
-            return $this->redirectToRoute('dog_index');
+            if ($form->isSubmitted() && $form->isValid()) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($dog);
+                $entityManager->flush();
+                return $this->redirectToRoute('dog_index');
+            }
+            return new JsonResponse(['message' =>'The form is not correct'],Response::HTTP_BAD_REQUEST);
         }
 
         return $this->render('dog/new.html.twig', [
@@ -83,7 +90,7 @@ class DogController extends AbstractController
      */
     public function delete(Request $request, Dog $dog): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$dog->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $dog->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($dog);
             $entityManager->flush();
@@ -91,4 +98,5 @@ class DogController extends AbstractController
 
         return $this->redirectToRoute('dog_index');
     }
+
 }
