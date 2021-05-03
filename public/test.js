@@ -1,5 +1,5 @@
 let form = document.getElementById('myForm'); // prend la valeur du formulaire
- console.log(form);
+// console.log(form);
 
 async function ajax(data) {
     return new Promise(resolve => {
@@ -33,41 +33,42 @@ function validerEmail(email) {
 form.addEventListener('submit', async (e) => {
     e.preventDefault(); // empêche l'envoi sur formulaire
 
+
     let formData = new FormData(form);
-    let catExists = await ajax(formData); // catExists attend que la fonction ajax soit fini avant de commencer
+    let valueAjax = await ajax(formData);// catExists attend que la fonction ajax soit fini avant de commencer
+    let valueExists = JSON.parse(valueAjax); // convertis ce qu'on reçois de l'ajaxController en tableau
     let cat = form[0].value,
         price = form[1].value,
         monkey = form[2].value,
-        error = 0,
-        errorMsg = '';
+        errorCounter = 0,
+        errorMsg = "";
 
-    // console.log(cat, price, monkey); // affiche dans la console le champ cat price monkey
-    // console.log(catExists); // typeof = montrer si c'est un string ou un int
-    // console.log(JSON.parse(catExists)); // typeof = montrer si c'est un string ou un int
+    //console.log(cat, price, monkey); // affiche dans la console le champ cat price monkey
+    //console.log(valueExists); // typeof = montrer si c'est un string ou un int
+    //console.log(JSON.parse(valueExists)); // typeof = montrer si c'est un string ou un int
 
-    if (catExists === true) {
-        errorMsg += "Le nom est déjà pris"
-        error++;
+    if (valueExists.error === true) {
+        errorMsg += valueExists.msg; // envoie le msg qui se trouve dans l'ajax controller dans errorMsg
+        errorCounter++;
     }
     if (!validation_Nom(cat)) { // si la valeur dans le 2eme input ne passe pas le regex, msg d'erreur
-        errorMsg += "le nom de cat n'est pas correcte \r";
-        error++;
+        errorMsg += "Le nom de cat n'est pas correcte <br/>";
+        errorCounter++;
     }
     if (!validation_Nom(monkey)) { // si la valeur dans le 3eme input ne passe pas le regex, un msg d'erreur est formé
         // + une incrémentation
-        errorMsg += "le nom de monkey n'est pas correcte \r";
-        error++;
+        errorMsg += "Le nom de monkey n'est pas correcte ";
+        errorCounter++;
     }
-    //console.log(error);  //affiche les nombres d'erreurs qu'il y a
+    //console.log(errorCounter);  //affiche les nombres d'erreurs qu'il y a
     //console.log(errorMsg); // affiche errorMsg dans la console
 
-    if (error > 0) {
+    if (errorCounter > 0) {
         document.getElementById("testEcrit").innerHTML = errorMsg; // si il y a plus de une erreur envoie la
         // fonction errorMsg
-
     } else {
-         form.submit(); // envoie le formulaire
-       //  console.log(form);  // affiche dans la console
+        form.submit(); // envoie le formulaire
+        //  console.log(form);  // affiche dans la console
     }
 });
 
