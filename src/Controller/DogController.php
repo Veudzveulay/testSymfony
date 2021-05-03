@@ -38,7 +38,7 @@ class DogController extends AbstractController
         $form->handleRequest($request);
 
         if ($request->isMethod('POST')) {
-            $form->submit($request->request->get($form ->getNa));
+            $form->submit($request->request->all());
 
             if ($form->isSubmitted() && $form->isValid()) {
                 $entityManager = $this->getDoctrine()->getManager();
