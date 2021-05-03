@@ -17,6 +17,7 @@ class AjaxController extends AbstractController
 
     public function index(): JsonResponse
     {
+        $error_msg = []; // créer un tableau error
         $cat = $_POST["dog"]["cat"]; // permet de récuperer ce qu'il y a dans l'input dog_cat
         $filtered_cat_name = filter_var($cat, FILTER_SANITIZE_STRING);
         $monkey = $_POST["dog"]["monkey"]; // permet de récuperer ce qu'il y a dans l'input dog_monkey
@@ -25,30 +26,27 @@ class AjaxController extends AbstractController
         $repository = $this->getDoctrine()
             ->getRepository(Dog::class);
 
-        $dog_cat = $repository->findOneBy(array('cat' => $filtered_cat_name)); // on va cherche dans le repository tout les noms qui sont comme $cat
+        $dog_cat = $repository->findOneBy(array('cat' => $filtered_cat_name)); // on va cherche dans le repository tout les noms qui sont
+        // comme $cat
         $dog_monkey = $repository->findOneBy(array('monkey' => $filtered_monkey_name)); // on va cherche dans le repository
         // tout les noms qui sont comme $monkey
 
-        $error_msg = [];
-
         if (!empty($dog_cat)) {
-            array_push($error_msg, 'Cat exists');
+            array_push($error_msg, 'Le nom inscrit dans cat existe déjà'."<br>");
+            // permet de mettre dans le tableau error_msg une valeur
         }
         if (!empty($dog_monkey)) {
-            array_push($error_msg, 'Monkey exists.');
+            array_push($error_msg, 'Le nom inscrit dans monkey existe déjà');
         }
         if (!empty($error_msg)) {
             $response = [
-                'error' => true,
-                'msg' => $error_msg
+                'msg' => $error_msg,
+                'error' => true
             ];
             return new JsonResponse($response);
         }
-
-        if (empty($dog_cat)) {
+        else {
             return new JsonResponse(false);
-        } else {
-            return new JsonResponse(true);
         }
     }
 
