@@ -37,18 +37,27 @@ class DogController extends AbstractController
         $form = $this->createForm(DogType::class, $dog);
         $form->handleRequest($request);
 
-        if ($request->isMethod('POST')) {
-            $form->submit($request->request->all());
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($dog);
-                $entityManager->flush();
-                return $this->redirectToRoute('dog_index');
-            }
-            return new JsonResponse(['message' =>'The form is not correct'],Response::HTTP_BAD_REQUEST);
-        }
+                $cat = $_POST["dog"]["cat"];
+                $monkey = $_POST["dog"]["monkey"];
 
+                $repository = $this->getDoctrine()
+                    ->getRepository(Dog::class);
+
+                $dog_cat = $repository->findOneBy(array('cat' => $cat)); // on va cherche dans le repository tout les noms qui sont
+                $dog_monkey = $repository->findOneBy(array('monkey' => $monkey));
+
+                if (empty($dog_cat) && empty($dog_monkey) && preg_match("/^([a-zA-Z' ]+)$/", $cat)
+                    && preg_match("/^([a-zA-Z' ]+)$/", $monkey)){
+
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($dog);
+                    $entityManager->flush();
+                    return $this->redirectToRoute('dog_index');
+                }
+
+            }
         return $this->render('dog/new.html.twig', [
             'dog' => $dog,
             'form' => $form->createView(),
