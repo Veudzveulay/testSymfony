@@ -37,57 +37,67 @@ class DogController extends AbstractController
         $form = $this->createForm(DogType::class, $dog);
         $form->handleRequest($request);
 
-
         if ($form->isSubmitted() && $form->isValid()) {
             $cat = $_POST["dog"]["cat"];
             $monkey = $_POST["dog"]["monkey"];
+            $error = 0;
 
             if ($cat === "" && $monkey === "") {
                 echo "erreur" . "<br>";
+                $error++;
             }
             if (preg_match("/^([a-zA-Z' ]+)$/", $cat)) {
-                echo "good1" . "<br>";
-                $regex_cat = 1;
-            }
-            if (preg_match("/^([a-zA-Z' ]+)$/", $monkey)) {
-                echo "good2" . "<br>";
-                $regex_monkey = 1;
-            }
-            if (filter_var($monkey, FILTER_VALIDATE_EMAIL)) {
-                echo "good3" . "<br>";
-                $filtered_monkey = 1;
-            }
-            if (filter_var($cat, FILTER_SANITIZE_STRING)) {
-                echo "good4" . "<br>";
-                $filtered_cat = 1;
-            }
-            if ($filtered_monkey === 1 && $filtered_cat === 1 && $regex_monkey === 1 && $regex_cat === 1) {
-                $repository = $this->getDoctrine()
-                    ->getRepository(Dog::class);
 
-                $dog_cat = $repository->findOneBy(array('cat' => $cat)); // on va cherche dans le repository tout les noms qui sont
-                $dog_monkey = $repository->findOneBy(array('monkey' => $monkey));
-
-                if (empty($dog_cat) && empty($dog_monkey)) {
-                    $entityManager = $this->getDoctrine()->getManager();
-                    $entityManager->persist($dog);
-                    $entityManager->flush();
-                    return $this->redirectToRoute('dog_index');
-                }
             } else {
-                echo "";
+                $error++;
+            }
+            if (preg_match('/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/', $monkey)) {
+
+            } else {
+                $error++;
+            }
+            if ($filtered_monkey = filter_var($monkey, FILTER_VALIDATE_EMAIL)) {
+
+            } else {
+                $error++;
+            }
+            if ($filtered_cat = filter_var($cat, FILTER_SANITIZE_STRING)) {
+
+            } else {
+                $error++;
+            }
+            $repository = $this->getDoctrine()
+                ->getRepository(Dog::class);
+
+            $dog_cat = $repository->findOneBy(array('cat' => $filtered_cat)); // on va cherche dans le repository tout les noms qui sont
+            $dog_monkey = $repository->findOneBy(array('monkey' => $filtered_monkey));
+
+            if (empty($dog_cat) && empty($dog_monkey)) {
+
+            } else {
+                $error++;
+            }
+            if ($error > 0) {
+                echo "Je dois faire TWIG en affichage";
+            } else {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($dog);
+                $entityManager->flush();
+                return $this->redirectToRoute('dog_index');
             }
         }
         return $this->render('dog/new.html.twig', [
             'dog' => $dog,
             'form' => $form->createView(),
         ]);
+
     }
 
     /**
      * @Route("/{id}", name="dog_show", methods={"GET"})
      */
-    public function show(Dog $dog): Response
+    public
+    function show(Dog $dog): Response
     {
         return $this->render('dog/show.html.twig', [
             'dog' => $dog,
@@ -97,7 +107,8 @@ class DogController extends AbstractController
     /**
      * @Route("/{id}/edit", name="dog_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Dog $dog): Response
+    public
+    function edit(Request $request, Dog $dog): Response
     {
         $form = $this->createForm(DogType::class, $dog);
         $form->handleRequest($request);
@@ -117,7 +128,8 @@ class DogController extends AbstractController
     /**
      * @Route("/{id}", name="dog_delete", methods={"POST"})
      */
-    public function delete(Request $request, Dog $dog): Response
+    public
+    function delete(Request $request, Dog $dog): Response
     {
         if ($this->isCsrfTokenValid('delete' . $dog->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
