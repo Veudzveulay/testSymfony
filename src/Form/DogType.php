@@ -19,12 +19,7 @@ class DogType extends AbstractType
     {
         $builder
             ->add('cat', TextType::class, [
-                'label' => 'Name',
-                'constraints' => [
-                    new notBlank,
-                    new Length(['min' => 2,
-                        'max' => 100,])
-                ]
+                'label' => ' Name '
             ])
             ->add('price')
             ->add('monkey');
