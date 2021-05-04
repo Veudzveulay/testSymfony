@@ -12,23 +12,35 @@ async function ajax(data) {
     })
 }
 
-function response() {
-    // console.log(this.responseText); // pour voir le texte dans la console
-    // document.getElementById("testEcrit").innerHTML = this.responseText;
-    return this.responseText;
-}
-
-
 function validation_Nom(verification) {
 
     let nom = new RegExp(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u);
     return nom.test(verification);
 }
 
-function validerEmail(email) {
-    var mail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return mail.test(email);
-}
+form.addEventListener('keyup', async (e) => {
+
+    let cat = form[0].value,
+        price = form[1].value,
+        monkey = form[2].value;
+
+    if (validation_Nom(cat)) { // si la valeur dans le 2eme input ne passe pas le regex, msg d'erreur
+        let surname = document.getElementById("dog_cat");
+        surname.setAttribute('style', 'border: 2px solid #34C924');
+        surname.style.color = '#34c924';
+    } else {
+        let inputCat = form[0];
+        inputCat.setAttribute('style', 'border : 2px solid  red');
+        inputCat.style.color = 'red';
+    }
+    if (!validation_Nom(monkey)) {
+        let inputMonkey = form[2];
+        inputMonkey.style.color = 'red';
+    } else {
+        let inputMonkey = form[2];
+        inputMonkey.style.color = 'green';
+    }
+});
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault(); // empêche l'envoi sur formulaire
